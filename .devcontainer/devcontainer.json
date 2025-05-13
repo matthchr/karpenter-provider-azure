@@ -100,5 +100,13 @@
 		// agent tools
 		"ghcr.io/devcontainers-extra/features/ripgrep:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
-	}
+	},
+	// https://github.com/microsoft/vscode-remote-release/issues/5322
+	"mounts": [
+		"source=${localEnv:HOME}/.azure/,target=/home/vscode/.azure/,type=bind", // TODO: This might break codespaces
+		"source=${localEnv:HOME}/.bashrc,target=/home/vscode/.bashrc,type=bind",
+		"source=${localEnv:HOME}/.netrc,target=/home/vscode/.netrc,type=bind",
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind",
+		"source=${localEnv:HOME}/.kube,target=/home/vscode/.kube,type=bind"
+	]
 }

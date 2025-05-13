@@ -95,20 +95,31 @@ linters:
       - examples$
 issues:
   fix: true
+  exclude: ['declaration of "(err|ctx)" shadows declaration at']
+  exclude-rules:
+  - linters:
+    - goheader
+    path: 'zz_(.+)\.go'
+  - linters:
+    - goheader
+    source: "^//go:build"
+  exclude-dirs:
+    - tools
+    - hack
+    - charts
+    - designs
+
 formatters:
   enable:
-    - goimports
+    - gci
   settings:
-    goimports:
-      local-prefixes:
-        - github.com/azure/karpenter-provider-azure
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/Azure/karpenter-provider-azure/)
+      custom-order: true
   exclusions:
-    generated: lax
+    #generated: lax
     paths:
-      - tools
-      - hack
-      - charts
-      - designs
-      - third_party$
-      - builtin$
       - examples$
