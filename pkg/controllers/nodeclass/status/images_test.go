@@ -18,7 +18,6 @@ package status_test
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v7"
@@ -189,7 +188,7 @@ var _ = Describe("NodeClass NodeImage Status Controller", func() {
 			)
 
 			BeforeEach(func() {
-				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface)
+				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface, "")
 			})
 
 			It("images ready status should be false if FIPS is enabled but UseSIG is false", func() {
@@ -223,8 +222,7 @@ var _ = Describe("NodeClass NodeImage Status Controller", func() {
 			var imageReconciler *status.NodeImageReconciler
 
 			BeforeEach(func() {
-				os.Setenv("SYSTEM_NAMESPACE", "kube-system")
-				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface)
+				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface, "kube-system")
 				ExpectApplied(ctx, env.Client, getClosedMWConfigMap())
 
 				nodeClass.Status.ObservedVersions = &v1beta1.ObservedVersions{
@@ -361,14 +359,13 @@ var _ = Describe("NodeClass NodeImage Status Controller", func() {
 
 		})
 
-		When("SYSTEM_NAMESPACE is set", func() {
+		When("the system namespace is set", func() {
 			var (
 				imageReconciler *status.NodeImageReconciler
 			)
 
 			BeforeEach(func() {
-				os.Setenv("SYSTEM_NAMESPACE", "kube-system")
-				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface)
+				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface, "kube-system")
 			})
 
 			It("Should update NodeImages when ConfigMap is missing (fail open)", func() {
@@ -439,14 +436,13 @@ var _ = Describe("NodeClass NodeImage Status Controller", func() {
 			})
 		})
 
-		When("SYSTEM_NAMESPACE is not set", func() {
+		When("the system namespace is empty", func() {
 			var (
 				imageReconciler *status.NodeImageReconciler
 			)
 
 			BeforeEach(func() {
-				os.Unsetenv("SYSTEM_NAMESPACE")
-				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface)
+				imageReconciler = status.NewNodeImageReconciler(azureEnv.ImageProvider, env.KubernetesInterface, "")
 			})
 
 			It("Should update NodeImages (fail open)", func() {
